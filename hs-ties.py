@@ -35,7 +35,10 @@ def eval(input, candidates, constraints):
 	for can in candidates:
 		row = [can]
 		for con in (constraints):
-			row.append(con(input, can))
+			if con.type == 'faithfulness':
+				row.append(con.vios(can, input))
+			else:
+				row.append(con.vios(can))
 		tableau.append(row)
 
 #	print input
@@ -61,67 +64,32 @@ def eval(input, candidates, constraints):
 	optima = [r[0] for r in tableau]
 	return optima
 
-# Constraint definitions
-def ident(input, candidate):
-	# IDENT
-	if input == candidate:
-		return 0
-	if len(input) == len(candidate):
-		return 1
+class Constraint:
+	def __init__(self, name, loci=[]):
+		self.name = name
+		if self.name in ['ident', 'dep']:
+			self.type = 'faithfulness'
+		else:
+			self.type = 'markedness'
+			self.loci = loci
 
-def dep(input, candidate):
-	# DEP
-	if len(input) < len(candidate):
-		return 1
-	return 0
-
-def starA(input, candidate):
-	# *a
-	vios = 0
-	for i in range(len(candidate)):
-		if candidate[i] == 'a':
-			vios += 1
-	return vios
-
-def starAB(input, candidate):
-	# *{ab, ba}
-	vios = 0
-	for i in range(len(candidate) - 1):
-		if candidate[i] != candidate[i+1]:
-			vios += 1
-	return vios
-
-def starAA(input, candidate):
-	# *aa
-	vios = 0
-	for i in range(len(candidate) - 1):
-		if candidate[i:i+2] == 'aa':
-			vios += 1
-	return vios
-
-def starBBB(input, candidate):
-	# *bbb
-	vios = 0
-	for i in range(len(candidate) - 2):
-		if candidate[i:i+3] == 'bbb':
-			vios += 1
-	return vios
-
-def FtBin(input, candidate):
-	# FtBin
-	vios = 0
-	for i in range(len(candidate) - 2):
-		if candidate[i:i+3] == '(S)':
-			vios += 1
-	return vios
-
-def ParseSyl(input, candidate):
-	# Parse-Syllable
-	vios = 0
-	for i in range(len(candidate)):
-		if candidate[i] == 's':
-			vios += 1
-	return vios
+	def vios(self, candidate, input=''):
+		if self.type == 'faithfulness':
+			if input == candidate:
+				return 0
+			if self.name == 'dep':
+				if len(input) < len(candidate):
+					return 1
+			elif self.name == 'ident':
+				if len(input) == len(candidate):
+					return 1
+		else:
+			vios = 0
+			for locus in self.loci:
+				for i in range(len(candidate) + 1 - len(locus)):
+					if candidate[i:i+len(locus)] == locus:
+						vios += 1
+			return vios
 
 # Convergent tie: *a >> IDENT
 ur = 'aaaa'
@@ -131,7 +99,7 @@ stack = [ur]
 while stack:
 	input = stack.pop()
 	candidates = gen(input, change=True)
-	optima = eval(input, candidates, [starA, ident])
+	optima = eval(input, candidates, [Constraint('*a', ['a']), Constraint('ident')])
 	for optimum in optima:
 		if optimum == input:
 			outputs.add(optimum)
@@ -148,7 +116,7 @@ stack = [ur]
 while stack:
 	input = stack.pop()
 	candidates = gen(input, change=True)
-	optima = eval(input, candidates, [starAB, ident])
+	optima = eval(input, candidates, [Constraint('*ab', ['ab', 'ba']), Constraint('ident')])
 	for optimum in optima:
 		if optimum == input:
 			outputs.add(optimum)
@@ -165,7 +133,7 @@ stack = [ur]
 while stack:
 	input = stack.pop()
 	candidates = gen(input, change=True)
-	optima = eval(input, candidates, [starAA, ident])
+	optima = eval(input, candidates, [Constraint('*aa', ['aa']), Constraint('ident')])
 	for optimum in optima:
 		if optimum == input:
 			outputs.add(optimum)
@@ -182,7 +150,7 @@ stack = [ur]
 while stack:
 	input = stack.pop()
 	candidates = gen(input, insert=True)
-	optima = eval(input, candidates, [starBBB, dep])
+	optima = eval(input, candidates, [Constraint('*bbb', ['bbb']), Constraint('dep')])
 	for optimum in optima:
 		if optimum == input:
 			outputs.add(optimum)
@@ -199,7 +167,7 @@ stack = [ur]
 while stack:
 	input = stack.pop()
 	candidates = gen(input, footing=True)
-	optima = eval(input, candidates, [FtBin, ParseSyl])
+	optima = eval(input, candidates, [Constraint('FtBin',['(S)']), Constraint('ParseSyl', ['s'])])
 	for optimum in optima:
 		if optimum == input:
 			outputs.add(optimum)
