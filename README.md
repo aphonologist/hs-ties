@@ -1,1 +1,46 @@
-some text here
+# HS-Ties
+
+This repo contains a rough-and-ready implementation of Harmonic Serialism that computes derivations from a given UR. If there are multiple optimal candidates at a given step, all derivations are computed.
+
+## Operations
+
+There are five operations implemented grouped under three categories:
+
+* Change: a->b and b->a
+* Insert: 0->b
+* Footing: s -> (S) and ss -> (SS) [s and S represent unparsed and parsed syllables]
+
+## Gen
+
+The GEN function produces a candidate set using the operations defined above.
+
+## Constraints
+
+Constraints return a number of violations for a given candidate. Two faithfulness constraints are predefined:
+
+* DEP: 1 violation for applying Insert operation
+* IDENT: 1 violation for applying Change operation
+
+Markedness constraints are defined with a list of strings defining loci of violation.
+
+## Eval
+
+The EVAL function takes an input, a candidate set, and a ranked set of constraints and returns the optimal set of candidates.
+
+## Running the script
+
+The script was written to be run with Python 2. Derivations are computed with the use of a stack to accommodate ties. The examples coded are those reported in Lamont (2019).
+
+The script outputs URs with the set of outputs:
+
+```
+python hs-ties.py
+/aaaa/ -> [bbbb]
+/ababa/ -> [aaaaa, bbbbb]
+/ababababa/ -> [bbbbbbaaa, aaabbbbbb, aaabbbaaa, aaaaaaaaa, aaaaabbbb, bbbbbbbbb, bbbbaaaaa]
+/aaaaa/ -> [ababa, babba, babab, abbab, abbba]
+/bbbbbb/ -> [bbabababb, babbabbab, bbabbabb, babbababb, bbababbab]
+/ssssss/ -> [s(SS)s(SS), s(SS)(SS)s, (SS)s(SS)s, (SS)(SS)(SS)]
+```
+
+Lamont, Andrew. 2019. Ties in Harmonic Serialism. Unpublished manuscript, University of Massachusetts Amherst.
