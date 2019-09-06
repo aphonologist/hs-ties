@@ -4,11 +4,12 @@ This repo contains a rough-and-ready implementation of Harmonic Serialism that c
 
 ## Operations
 
-There are five operations implemented grouped under three categories:
+There are six operations implemented grouped under three categories:
 
-* Change: a->b and b->a
-* Insert: 0->b
+* Change: a -> b and b -> a
+* Insert: 0 -> b
 * Footing: s -> (S) and ss -> (SS) [s and S represent unparsed and parsed syllables]
+* Metathesis: xy -> yx [x and y represent any characters]
 
 ## Gen
 
@@ -20,6 +21,7 @@ Constraints return a number of violations for a given candidate. Two faithfulnes
 
 * DEP: 1 violation for applying Insert operation
 * IDENT: 1 violation for applying Change operation
+* CONTIG: 1 violation for applying Metathesis operation
 
 Markedness constraints are defined with a list of strings defining loci of violation.
 
@@ -40,6 +42,7 @@ python hs-ties.py
 /ababababa/ -> [bbbbbbaaa, aaabbbbbb, aaabbbaaa, aaaaaaaaa, aaaaabbbb, bbbbbbbbb, bbbbaaaaa]
 /aaaaa/ -> [ababa, babba, babab, abbab, abbba]
 /bbbbbb/ -> [bbabababb, babbabbab, bbabbabb, babbababb, bbababbab]
+/abababa/ -> [abbaaab, baaabba, baabbaa, aabbbaa, aabbaab]
 /ssssss/ -> [s(SS)s(SS), s(SS)(SS)s, (SS)s(SS)s, (SS)(SS)(SS)]
 ```
 
