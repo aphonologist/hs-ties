@@ -1,7 +1,7 @@
 # Andrew Lamont
-# July 2019
+# September 2019
 
-def gen(input, change=False, insert=False, footing=False):
+def gen(input, change=False, insert=False, footing=False, metathesis=False):
 	# Returns a set of candidates from an input
 	candidates = set([input])
 
@@ -26,6 +26,11 @@ def gen(input, change=False, insert=False, footing=False):
 		for i in range(len(input) - 1):
 			if input[i] == input[i+1] == 's':
 				candidates.add(input[:i] + '(SS)' + input[i+2:])
+
+	# xy -> yx
+	if metathesis:
+		for i in range(len(input) - 1):
+			candidates.add(input[:i] + input[i+1] + input[i] + input[i+2:])
 
 	return candidates
 
@@ -67,7 +72,7 @@ def eval(input, candidates, constraints):
 class Constraint:
 	def __init__(self, name, loci=[]):
 		self.name = name
-		if self.name in ['ident', 'dep']:
+		if self.name in ['ident', 'dep', 'contig']:
 			self.type = 'faithfulness'
 		else:
 			self.type = 'markedness'
@@ -83,6 +88,10 @@ class Constraint:
 			elif self.name == 'ident':
 				if len(input) == len(candidate):
 					return 1
+			elif self.name == 'contig':
+				for i in range(len(input) - 1):
+					if input[i] == candidate[i+1] and input[i+1] == candidate[i]:
+						return 1
 		else:
 			vios = 0
 			for locus in self.loci:
@@ -125,6 +134,23 @@ while stack:
 
 print '/' + ur + '/ -> [' + ', '.join(outputs) + ']'
 
+# Divergent tie: *{ab, ba} >> IDENT
+ur = 'ababababa'
+outputs = set([])
+stack = [ur]
+
+while stack:
+	input = stack.pop()
+	candidates = gen(input, change=True)
+	optima = eval(input, candidates, [Constraint('*ab', ['ab', 'ba']), Constraint('ident')])
+	for optimum in optima:
+		if optimum == input:
+			outputs.add(optimum)
+		else:
+			stack.append(optimum)
+
+print '/' + ur + '/ -> [' + ', '.join(outputs) + ']'
+
 # Divergent tie: *aa >> IDENT
 ur = 'aaaaa'
 outputs = set([])
@@ -151,6 +177,24 @@ while stack:
 	input = stack.pop()
 	candidates = gen(input, insert=True)
 	optima = eval(input, candidates, [Constraint('*bbb', ['bbb']), Constraint('dep')])
+	for optimum in optima:
+		if optimum == input:
+			outputs.add(optimum)
+		else:
+			stack.append(optimum)
+
+print '/' + ur + '/ -> [' + ', '.join(outputs) + ']'
+
+
+# Divergent tie: *aba >> CONTIG
+ur = 'abababa'
+outputs = set([])
+stack = [ur]
+
+while stack:
+	input = stack.pop()
+	candidates = gen(input, metathesis=True)
+	optima = eval(input, candidates, [Constraint('*aba', ['aba']), Constraint('contig')])
 	for optimum in optima:
 		if optimum == input:
 			outputs.add(optimum)
