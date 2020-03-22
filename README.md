@@ -44,6 +44,7 @@ python hs-ties.py
 /bbbbbb/ -> [bbabababb, babbabbab, bbabbabb, babbababb, bbababbab]
 /abababa/ -> [abbaaab, baaabba, baabbaa, aabbbaa, aabbaab]
 /ssssss/ -> [s(SS)s(SS), s(SS)(SS)s, (SS)s(SS)s, (SS)(SS)(SS)]
+/aaaaa/ -> [ababa, abaab, babab, baaba]
 ```
 
-Lamont, Andrew. 2019. Ties in Harmonic Serialism. Unpublished manuscript, University of Massachusetts Amherst.
+Lamont, Andrew. 2020. Ties in Harmonic Serialism. Unpublished manuscript, University of Massachusetts Amherst.
