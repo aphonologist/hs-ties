@@ -1,5 +1,5 @@
 # Andrew Lamont
-# September 2019
+# March 2020
 
 def gen(input, change=False, insert=False, footing=False, metathesis=False):
 	# Returns a set of candidates from an input
@@ -212,6 +212,23 @@ while stack:
 	input = stack.pop()
 	candidates = gen(input, footing=True)
 	optima = eval(input, candidates, [Constraint('FtBin',['(S)']), Constraint('ParseSyl', ['s'])])
+	for optimum in optima:
+		if optimum == input:
+			outputs.add(optimum)
+		else:
+			stack.append(optimum)
+
+print '/' + ur + '/ -> [' + ', '.join(outputs) + ']'
+
+# Divergent tie: *bb >> *a >> IDENT
+ur = 'aaaaa'
+outputs = set([])
+stack = [ur]
+
+while stack:
+	input = stack.pop()
+	candidates = gen(input, change=True)
+	optima = eval(input, candidates, [Constraint('*bb', ['bb']), Constraint('*a', ['a']), Constraint('ident')])
 	for optimum in optima:
 		if optimum == input:
 			outputs.add(optimum)
