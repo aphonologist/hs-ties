@@ -31,7 +31,7 @@ The EVAL function takes an input, a candidate set, and a ranked set of constrain
 
 ## Running the script
 
-The script was written to be run with Python 2. Derivations are computed with the use of a stack to accommodate ties. The examples coded are those reported in Lamont (2019).
+The script was written to be run with Python 2. Derivations are computed with the use of a stack to accommodate ties. The examples coded are those reported in Lamont (2020).
 
 The script outputs URs with the set of outputs:
 
