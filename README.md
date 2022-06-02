@@ -31,7 +31,7 @@ The EVAL function takes an input, a candidate set, and a ranked set of constrain
 
 ## Running the script
 
-The script was written to be run with Python 2. Derivations are computed with the use of a stack to accommodate ties. The examples coded are those reported in Lamont (2020).
+The script was written to be run with Python 2. Derivations are computed with the use of a stack to accommodate ties. The examples coded are those reported in Lamont (2022).
 
 The script outputs URs with the set of outputs:
 
@@ -47,4 +47,5 @@ python hs-ties.py
 /aaaaa/ -> [ababa, abaab, babab, baaba]
 ```
 
-Lamont, Andrew. 2020. Ties in Harmonic Serialism. Unpublished manuscript, University of Massachusetts Amherst.
+Lamont, Andrew. 2022. Directional Constraint Evaluation Solves the Problem of Ties in Harmonic Serialism. *Linguistic Inquiry*. 
+https://doi.org/10.1162/ling_a_00417
